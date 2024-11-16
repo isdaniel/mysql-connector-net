@@ -28,6 +28,7 @@
 
 using MySql.Data.Common;
 using System;
+using System.Collections;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -415,8 +416,16 @@ namespace MySql.Data.MySqlClient
         _tempBuffer = new byte[length];
 
       await ReadAsync(_tempBuffer, 0, (int)length, execAsync).ConfigureAwait(false);
+            string str = _encoding.GetString(_tempBuffer);
+            if (_encoding == UnicodeEncoding.BigEndianUnicode)
+            {
+                Console.WriteLine($"encoding{_encoding.EncodingName} : message{str}");
 
-      return _encoding.GetString(_tempBuffer, 0, (int)length);
+                Console.WriteLine($"original hex values: {BitConverter.ToString(_tempBuffer).Replace("-", string.Empty)}");
+                Console.WriteLine();
+            }
+            
+            return _encoding.GetString(_tempBuffer, 0, (int)length);
     }
 
     public string ReadString()
